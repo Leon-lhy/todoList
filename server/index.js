@@ -2,7 +2,7 @@ var express = require('express'),
     app = express(),
     cors = require('cors'),
     pool = require('./db');
-    
+
 // req.body is used to access actual form data that you 'posted'.
 // req.params is used for route parameters, in your case userId which is passed in the parameters:
 
@@ -22,11 +22,12 @@ app.post("/todos", async (req, res) => {
         "INSERT INTO todo (description) VALUES($1) RETURNING *",
         [description]
     );
-    console.log(newTodo.rows[0]);
+    res.json(newTodo.rows[0]);
+    
 });
 
 //GET
-app.get("/todos", (req, res) => {
+app.get("/todos", async (req, res) => {
     try {
         const allTodos = await pool.query("SELECT * FROM todo");
         res.json(allTodos.rows);
@@ -36,7 +37,7 @@ app.get("/todos", (req, res) => {
 })
 
 //UPDATE
-app.put("/todos/:id", (req, res) => {
+app.put("/todos/:id", async (req, res) => {
     const { id } = req.params;
     const { description } = req.body;
     const updateTodo = await pool.query(
@@ -46,7 +47,7 @@ app.put("/todos/:id", (req, res) => {
 });
 
 //DELETE
-app.delete("todos/;id", (req, res) => {
+app.delete("/todos/:id", async (req, res) => {
     try {
         const { id } = req.params;
         const deleteTodo = await pool.query("DELETE FROM todo WHERE todo_id = $1", [
@@ -57,6 +58,8 @@ app.delete("todos/;id", (req, res) => {
         console.log(err.message);
     }
 });
+
+
 
 //listen
 app.listen(5000, (req, res) => {
