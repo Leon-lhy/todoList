@@ -44,6 +44,7 @@ app.put("/todos/:id", async (req, res) => {
         "UPDATE todo SET description = $1 WHERE todo_id = $2",
         [description, id]
     );
+    res.json("Todo was updated!");
 });
 
 //DELETE
